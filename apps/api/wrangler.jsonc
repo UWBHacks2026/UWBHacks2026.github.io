@@ -2,37 +2,24 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "skill-bridge-api",
   "main": "src/index.ts",
-  "compatibility_date": "2026-04-25"
-  // "compatibility_flags": [
-  //   "nodejs_compat"
-  // ],
+  "compatibility_date": "2026-04-25",
   // "vars": {
   //   "MY_VAR": "my-variable"
   // },
-  // "kv_namespaces": [
-  //   {
-  //     "binding": "MY_KV_NAMESPACE",
-  //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-  //   }
-  // ],
-  // "r2_buckets": [
-  //   {
-  //     "binding": "MY_BUCKET",
-  //     "bucket_name": "my-bucket"
-  //   }
-  // ],
-  // "d1_databases": [
-  //   {
-  //     "binding": "MY_DB",
-  //     "database_name": "my-database",
-  //     "database_id": ""
-  //   }
+  "d1_databases": [
+    {
+      "binding": "SKILL_BRIDGE_DB",
+      "database_name": "skill-bridge-db",
+      "database_id": "b882ee22-463d-4a28-98d0-27e6f2e626f7",
+      "migrations_dir": "./drizzle"
+    }
+  ],
   // ],
   // "ai": {
   //   "binding": "AI"
   // },
-  // "observability": {
-  //   "enabled": true,
-  //   "head_sampling_rate": 1
-  // }
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
 }

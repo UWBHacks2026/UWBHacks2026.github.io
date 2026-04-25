@@ -18,42 +18,16 @@ export const AnalyzeTextView = () => {
   const [sourceText, setSourceText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<TextAnalysisResult | null>(null);
-  const apiBaseUrl = "http://localhost:3000";
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      const response = await fetch(`${apiBaseUrl}/api/text-analysis`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text: sourceText }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setResult(data.data);
-      } else {
-        console.error(response.statusText);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="container mx-auto p-4 max-w-2xl">
       <h1 className="text-2xl font-bold mb-4">Text Analysis App</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form className="space-y-4">
         <Textarea
           value={sourceText}
           onChange={(e) => setSourceText(e.target.value)}
           placeholder="Enter your text here..."
-          className="min-h-[100px]"
+          className="min-h-25 content-center"
         />
         <Button type="submit" disabled={isLoading}>
           Analyze Text
