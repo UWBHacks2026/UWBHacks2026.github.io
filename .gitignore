@@ -1,0 +1,34 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Environment variables (IMPORTANT)
+.env
+
+# SQLite database (VERY IMPORTANT)
+*.db
+*.sqlite
+*.sqlite3
+
+# Drizzle generated files (optional)
+drizzle/*.db
+drizzle/*.sqlite
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code settings (optional)
+.vscode/
+
+# TypeScript cache
+*.tsbuildinfo
