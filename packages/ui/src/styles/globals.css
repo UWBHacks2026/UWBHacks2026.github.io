@@ -7,10 +7,6 @@
     box-sizing: border-box;
   }
  
-  body {
-    @apply bg-brand-bg font-sans antialiased;
-  }
- 
   /* Remove default input/button font inheritance issues */
   input,
   textarea,

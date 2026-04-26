@@ -1,35 +1,20 @@
-"use client";
+import type { Metadata } from "next";
+import "@repo/ui/globals.css";
+import { ClientLayoutWrapper } from "@/app/components/ClientLayoutWrapper";
 
-import NextLink from "next/link";
-import { useRouter, usePathname } from "next/navigation";
-import { RoutingContextType, RoutingProvider } from "@repo/ui/components/RoutingContext";
-import { Navbar } from "@repo/ui/components/navbar";
+export const metadata: Metadata = {
+  title: "Second Chapter",
+  description: "Fair-chance employment platform.",
+};
 
-import "./index.css";
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const nextRouting: RoutingContextType = {
-    Link: ({ href, children, ...props }: any) => <NextLink href={href} {...props}>{children}</NextLink>,
-    useNavigate: () => (path: string) => router.push(path),
-    usePathname: () => pathname,
-  };
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-	<html lang="en">
-	  <body>
-      <RoutingProvider value={nextRouting}>
-        <Navbar />
-
-        <main>{children}</main>
-      </RoutingProvider>
-	  </body>
-	</html>
+    <html lang="en">
+      <body className="bg-brand-bg min-h-screen antialiased">
+        <ClientLayoutWrapper>
+          {children}
+        </ClientLayoutWrapper>
+      </body>
+    </html>
   );
 }
