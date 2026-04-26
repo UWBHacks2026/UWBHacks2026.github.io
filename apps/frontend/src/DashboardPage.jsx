@@ -136,8 +136,7 @@ export default function DashboardPage() {
                 margin: "0 auto 36px",
               }}
             >
-              Second Chapter connects people with criminal records to employers who 
-              believe in second chances — and communities that need their talents.
+              Skill Bridge connects people with skills to jobs and communities that need their talents.
             </p>
 
             <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
@@ -226,7 +225,7 @@ export default function DashboardPage() {
                 margin: 0,
               }}
             >
-              How Second Chapter works
+              How Skill Bridge works
             </h2>
           </div>
 
