@@ -54,7 +54,7 @@ export const candidateProfiles = sqliteTable("candidate_profiles", {
 
   export const jobs = sqliteTable("jobs", {
   id: integer("id").primaryKey({ autoIncrement: true }),
-  employerId: integer("employer_id").notNull().references(() => employerProfiles.id),
+  employerId: integer("employer_id").references(() => employerProfiles.id),
   title: text("title").notNull(),
   description: text("description"),
   city: text("city"),
