@@ -1,4 +1,5 @@
 "use client";
+
 import { LoginPage } from "@repo/ui/views/LoginView";
 import { useRouter } from "next/navigation";
 

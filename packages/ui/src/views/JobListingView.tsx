@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@repo/ui/components/button";
+import { api } from "@repo/ui/lib/api";
 
 // Keep your ALL_LISTINGS and CATEGORIES arrays here as they were...
 const CATEGORIES = ["All", "Logistics", "Culinary", "Construction", "Environment", "Social Services", "Transportation", "Community", "Customer Service"];
@@ -11,7 +12,7 @@ const ALL_LISTINGS = [
 
 function OrgAvatar({ initials, color }: { initials: string, color: string }) {
   return (
-    <div 
+    <div
       className="w-12 h-12 rounded-xl flex items-center justify-center font-serif font-bold text-[15px] shrink-0"
       style={{ backgroundColor: `${color}18`, border: `1.5px solid ${color}30`, color }}
     >
@@ -22,7 +23,7 @@ function OrgAvatar({ initials, color }: { initials: string, color: string }) {
 
 function ListingCard({ listing, onSelect }: any) {
   const isJob = listing.type === "job";
-  
+
   return (
     <div
       onClick={() => onSelect(listing)}
@@ -30,7 +31,7 @@ function ListingCard({ listing, onSelect }: any) {
     >
       <div className="flex gap-4 items-start">
         <OrgAvatar initials={listing.initials} color={listing.color} />
-        
+
         <div className="flex-1 min-w-0">
           <div className="flex justify-between items-start gap-2.5 mb-1">
             <div className="min-w-0">
@@ -69,7 +70,7 @@ function ListingCard({ listing, onSelect }: any) {
 
           <div className="flex justify-between items-center mt-4">
             <span className="text-xs text-text-light">Posted {listing.posted}</span>
-            <Button size="sm" className="h-8 text-xs px-4">View Details →</Button>
+            <Button className="h-8 text-xs px-4">View Details →</Button>
           </div>
         </div>
       </div>
@@ -79,10 +80,10 @@ function ListingCard({ listing, onSelect }: any) {
 
 function DetailDrawer({ listing, onClose }: any) {
   if (!listing) return null;
-  
+
   return (
     <div className="fixed inset-0 bg-black/50 z-[60] flex justify-end" onClick={onClose}>
-      <div 
+      <div
         className="w-full max-w-[480px] h-full bg-brand-bg overflow-y-auto p-6 md:p-8 relative animate-in slide-in-from-right duration-300"
         onClick={(e) => e.stopPropagation()}
       >
@@ -143,89 +144,75 @@ function DetailDrawer({ listing, onClose }: any) {
   );
 }
 
-export function JobListingPage({ searchQuery = "" }: { searchQuery?: string }) {
+export function JobListingPage({ searchQuery = "", user }: { searchQuery?: string, user?: any }) {
   const [tab, setTab] = useState("all");
   const [category, setCategory] = useState("All");
   const [commitment, setCommitment] = useState("all");
   const [selected, setSelected] = useState<any>(null);
   const [internalSearch, setInternalSearch] = useState(searchQuery);
 
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   useEffect(() => { setInternalSearch(searchQuery); }, [searchQuery]);
 
-  const filtered = ALL_LISTINGS.filter((l) => {
+  useEffect(() => {
+    async function loadJobs() {
+      // Prevent if user does not exist yet
+      if (!user?.candidateId) return;
+
+      setLoading(true);
+      try {
+        const data = await api.searchMatchedJobs(user.candidateId, user.county || "King County");
+
+        const formattedJobs = data.matches.map((m: any) => ({
+          ...m.job,
+          type: "job",
+          commitment: m.job.employmentType === "full-time" ? "Full-time" : "Part-time",
+          tags: m.matchedSkills,
+          score: m.score
+        }));
+
+        setJobs(formattedJobs);
+      } catch (err) {
+        setError("Failed to load opportunities. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadJobs();
+  }, [user]);
+
+  const filtered = jobs.filter((l) => {
     if (tab !== "all" && l.type !== tab) return false;
-    if (category !== "All" && l.category !== category) return false;
-    if (commitment === "fulltime" && l.commitment !== "Full-time") return false;
-    if (commitment === "parttime" && l.commitment === "Full-time") return false;
     const q = internalSearch.toLowerCase();
-    if (q && !l.title.toLowerCase().includes(q) && !l.org.toLowerCase().includes(q) && !l.location.toLowerCase().includes(q) && !l.tags.some((t) => t.toLowerCase().includes(q))) return false;
+    if (q && !l.title.toLowerCase().includes(q) && !l.org.toLowerCase().includes(q)) return false;
     return true;
   });
 
+  // Interface
   return (
     <div className="max-w-[900px] mx-auto px-4 sm:px-6 py-9 pb-20">
-      
+
       {/* Header */}
       <div className="mb-7">
         <h1 className="font-serif text-3xl md:text-4xl text-text-main mb-2">Opportunities</h1>
         <p className="text-sm md:text-base text-text-muted">
-          Every listing here is from an employer who has pledged fair-chance hiring.
+          Based on your skills, we found {jobs.length} matched positions in {user?.county || "Washington"}.
         </p>
       </div>
 
-      {/* Filter Row */}
-      <div className="flex flex-wrap items-center gap-2.5 mb-5">
-        <div className="flex gap-0.5 bg-[#EDE8DF] rounded-xl p-1">
-          {[["all", "All"], ["job", "Jobs"], ["volunteer", "Volunteer"]].map(([val, label]) => (
-            <button
-              key={val}
-              onClick={() => setTab(val)}
-              className={`rounded-lg text-xs px-3.5 py-1.5 transition-all ${
-                tab === val ? "bg-brand-card text-text-main font-semibold shadow-sm" : "text-text-muted"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="bg-brand-card border border-brand-border rounded-xl text-sm text-[#57534E] h-10 px-3 outline-none focus:border-brand-green/60"
-        >
-          {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
-        </select>
-
-        <select
-          value={commitment}
-          onChange={(e) => setCommitment(e.target.value)}
-          className="bg-brand-card border border-brand-border rounded-xl text-sm text-[#57534E] h-10 px-3 outline-none focus:border-brand-green/60"
-        >
-          <option value="all">All Schedules</option>
-          <option value="fulltime">Full-time</option>
-          <option value="parttime">Part-time / Flexible</option>
-        </select>
-
-        {(category !== "All" || commitment !== "all" || internalSearch || tab !== "all") && (
-          <button
-            onClick={() => { setCategory("All"); setCommitment("all"); setInternalSearch(""); setTab("all"); }}
-            className="bg-brand-orange/10 text-brand-orange border border-brand-orange/20 rounded-xl text-xs px-3 h-10 font-semibold hover:bg-brand-orange/20 transition-colors"
-          >
-            Clear filters ×
-          </button>
-        )}
-
-        <span className="ml-auto text-sm text-text-muted">
-          <strong className="text-text-main">{filtered.length}</strong> results
-        </span>
-      </div>
-
       {/* Listings */}
-      {filtered.length === 0 ? (
+      {loading ? (
+        <div className="text-center py-16 text-text-muted">Loading your matched opportunities...</div>
+      ) : error ? (
+        <div className="text-center py-16 text-brand-orange">{error}</div>
+      ) : filtered.length === 0 ? (
         <div className="text-center py-16 px-6">
           <p className="font-serif text-2xl text-text-main mb-2.5">No matches found</p>
-          <p className="text-sm text-text-muted">Try changing your filters or search term.</p>
+          <p className="text-sm text-text-muted">Try updating your profile skills to see more jobs.</p>
         </div>
       ) : (
         <div className="flex flex-col gap-3.5">
@@ -234,13 +221,6 @@ export function JobListingPage({ searchQuery = "" }: { searchQuery?: string }) {
           ))}
         </div>
       )}
-
-      {/* Footer attribution */}
-      <div className="mt-10 py-5 text-center">
-        <p className="text-sm text-text-muted max-w-[600px] mx-auto">
-          This site incorporates information from <a href="https://services.onetcenter.org/" target="_blank" rel="noopener noreferrer" className="text-brand-green hover:underline">O*NET Web Services</a> by the U.S. Department of Labor.
-        </p>
-      </div>
 
       <DetailDrawer listing={selected} onClose={() => setSelected(null)} />
     </div>

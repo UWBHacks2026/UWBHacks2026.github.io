@@ -1,6 +1,86 @@
 import { Button } from "@repo/ui/components/button";
 
-// Assuming STATS, HOW_IT_WORKS, FEATURED, VALUES are imported or defined here
+export const STATS = [
+  { num: "240+", label: "Open Positions" },
+  { num: "80+", label: "Volunteer Roles" },
+  { num: "150+", label: "Partner Employers" },
+  { num: "1,200+", label: "People Placed" },
+];
+
+export const HOW_IT_WORKS = [
+  {
+    step: "01",
+    title: "Create Your Profile",
+    desc: "Build a full resume — work history, skills, and education — that tells your complete story on your terms.",
+    color: "#0F6E56",
+  },
+  {
+    step: "02",
+    title: "Browse Opportunities",
+    desc: "Search hundreds of jobs and volunteer roles from employers who specifically want to give you a fair shot.",
+    color: "#BA7517",
+  },
+  {
+    step: "03",
+    title: "Apply with Confidence",
+    desc: "Every employer on our platform has committed to fair-chance hiring. No hidden hurdles.",
+    color: "#534AB7",
+  },
+];
+
+export const FEATURED = [
+  {
+    id: 1, // Added IDs to make React mapping easier
+    title: "Warehouse Associate",
+    org: "Sunrise Logistics Co.",
+    location: "Chicago, IL",
+    pay: "$18–21/hr",
+    type: "job",
+    color: "#0F6E56",
+    initials: "SL",
+    tags: ["Entry Level", "Benefits"],
+  },
+  {
+    id: 2,
+    title: "Peer Mentor",
+    org: "Pathways Forward",
+    location: "Los Angeles, CA",
+    pay: "Volunteer + Stipend",
+    type: "volunteer",
+    color: "#993556",
+    initials: "PF",
+    tags: ["Youth", "Mentorship"],
+  },
+  {
+    id: 3,
+    title: "Construction Laborer",
+    org: "BuildRight Contractors",
+    location: "Phoenix, AZ",
+    pay: "$22–26/hr",
+    type: "job",
+    color: "#534AB7",
+    initials: "BR",
+    tags: ["OSHA Training", "Union Eligible"],
+  },
+];
+
+export const VALUES = [
+  { 
+    icon: "🤝", 
+    title: "Dignity First", 
+    desc: "We believe every person deserves to be seen for their potential, not reduced to their past." 
+  },
+  { 
+    icon: "🔓", 
+    title: "Radical Transparency", 
+    desc: "Employers on our platform have signed a fair-chance pledge. No surprises at the final stage." 
+  },
+  { 
+    icon: "🌱", 
+    title: "Long-term Support", 
+    desc: "We don't just match you to a job. We provide resources for lasting stability and growth." 
+  },
+];
 
 export function DashboardPage({ LinkComponent = "a" }: any) {
   return (

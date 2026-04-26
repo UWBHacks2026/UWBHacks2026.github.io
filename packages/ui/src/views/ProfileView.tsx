@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@repo/ui/components/button";
+import { api } from "@repo/ui/lib/api";
 
 const Label = ({ children }: { children: React.ReactNode }) => (
   <label className="block text-xs font-semibold text-[#57534E] mb-1.5 uppercase tracking-wider">
@@ -78,6 +79,7 @@ export function ProfilePage({ user }: any) {
   const [references, setReferences] = useState([blankRef()]);
   const [saved, setSaved] = useState(false);
   const [activeSection, setActiveSection] = useState("personal");
+  const [isSaving, setIsSaving] = useState(false);
 
   const setP = (field: string) => (val: string) => setPersonal((p) => ({ ...p, [field]: val }));
 
@@ -87,9 +89,40 @@ export function ProfilePage({ user }: any) {
     setSkillInput("");
   };
 
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      // Split "Full Name" into First and Last for the backend
+      const [firstName, ...lastNames] = personal.name.split(" ");
+      const lastName = lastNames.join(" ");
+
+      // Send to Hono backend POST /candidates
+      const response = await api.createCandidate({
+        email: personal.email,
+        passwordHash: "dummy-hash-for-now", // In a real app, this is handled via auth/session
+        firstName: firstName || "",
+        lastName: lastName || "",
+        phone: personal.phone,
+        county: "King County", // Hardcoded for this example, you should add a county dropdown to the UI
+        state: personal.state,
+        bio: personal.bio,
+        skills: skills.join(", "), // Backend runs this through extractSkills regex
+        languages: "English", // Add language state if needed
+      });
+
+      // Optionally pass the updated candidate ID back up to the App state
+      // if (onProfileUpdated && response.candidate) {
+      //   onProfileUpdated({ ...user, candidateId: response.candidate.id });
+      // }
+
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (error) {
+      console.error("Failed to save profile", error);
+      alert("Failed to save profile.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const updateItem = (list: any[], setList: any, id: number, field: string, val: any) =>
