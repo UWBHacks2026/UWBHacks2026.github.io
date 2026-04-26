@@ -364,29 +364,42 @@ export async function createCandidateWithSkills(
 // }
 
 export async function createJobFromApi(
-  envDb: D1Database,
+  env: D1Database,
   data: {
-    employerId?: number;
+    externalJobId: string;
+    org?: string;
     title: string;
     description?: string;
     city?: string;
-    county: string;
+    county?: string;
     state?: string;
+    location?: string;
+    pay?: string;
+    category?: string;
+    posted?: string;
+    applyUrl?: string;
     employmentType?: "full-time" | "part-time";
     skills: string[];
   }
 ) {
-  const database = getDb(envDb);
+  const database = getDb(env);
 
   const insertedJobs = await database
     .insert(jobs)
     .values({
-      employerId: data.employerId,
+      externalJobId: data.externalJobId,
+      source: "USAJobs",
       title: data.title,
+      org: data.org,
       description: data.description,
       city: data.city,
       county: data.county,
       state: data.state ?? "WA",
+      location: data.location,
+      applyUrl: data.applyUrl,
+      pay: data.pay,
+      category: data.category,
+      posted: data.posted,
       employmentType: data.employmentType,
     })
     .returning();

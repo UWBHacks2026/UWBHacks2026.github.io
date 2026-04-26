@@ -26,7 +26,7 @@ export const candidateProfiles = sqliteTable("candidate_profiles", {
   }),
 });
 
-  export const employerProfiles = sqliteTable("employer_profiles", {
+export const employerProfiles = sqliteTable("employer_profiles", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   userId: integer("user_id").notNull().references(() => users.id),
   companyName: text("company_name").notNull(),
@@ -40,26 +40,24 @@ export const candidateProfiles = sqliteTable("candidate_profiles", {
   website: text("website"),
 });
 
-  export const candidateSkills = sqliteTable("candidate_skills", {
-    id: integer("id").primaryKey({ autoIncrement: true }),
-    candidateId: integer("candidate_id").notNull().references(() => candidateProfiles.id),
-    skill: text("skill").notNull(),
-  });
-
-  export const candidateLanguages = sqliteTable("candidate_languages", {
-    id: integer("id").primaryKey({ autoIncrement: true }),
-    candidateId: integer("candidate_id").notNull().references(() => candidateProfiles.id),
-    language: text("language").notNull(),
-  });
-
-  export const jobs = sqliteTable("jobs", {
+export const candidateSkills = sqliteTable("candidate_skills", {
   id: integer("id").primaryKey({ autoIncrement: true }),
+  candidateId: integer("candidate_id").notNull().references(() => candidateProfiles.id),
+  skill: text("skill").notNull(),
+});
 
+export const candidateLanguages = sqliteTable("candidate_languages", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  candidateId: integer("candidate_id").notNull().references(() => candidateProfiles.id),
+  language: text("language").notNull(),
+});
+
+export const jobs = sqliteTable("jobs", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   employerId: integer("employer_id").references(() => employerProfiles.id),
-
+  org: text("org"),
   externalJobId: text("external_job_id"),
   source: text("source").default("USAJobs"),
-
   title: text("title").notNull(),
   description: text("description"),
   city: text("city"),
@@ -67,65 +65,67 @@ export const candidateProfiles = sqliteTable("candidate_profiles", {
   state: text("state").notNull().default("WA"),
   location: text("location"),
   applyUrl: text("apply_url"),
-
+  pay: text("pay"),
+  category: text("category"),
+  posted: text("posted"),
   employmentType: text("employment_type", {
     enum: ["full-time", "part-time"],
   }),
 });
 
-  export const jobSkills = sqliteTable("job_skills", {
-    id: integer("id").primaryKey({ autoIncrement: true }),
-    jobId: integer("job_id").notNull().references(() => jobs.id),
-    skill: text("skill").notNull(),
-  });
+export const jobSkills = sqliteTable("job_skills", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  jobId: integer("job_id").notNull().references(() => jobs.id),
+  skill: text("skill").notNull(),
+});
 
-  export const usersRelations = relations(users, ({ one }) => ({
-    candidateProfile: one(candidateProfiles),
-    employerProfile: one(employerProfiles),
-  }));
+export const usersRelations = relations(users, ({ one }) => ({
+  candidateProfile: one(candidateProfiles),
+  employerProfile: one(employerProfiles),
+}));
 
-  export const candidateRelations = relations(candidateProfiles, ({ one, many }) => ({
-    user: one(users, {
-      fields: [candidateProfiles.userId],
-      references: [users.id],
-    }),
-    skills: many(candidateSkills),
-    languages: many(candidateLanguages),
-  }));
+export const candidateRelations = relations(candidateProfiles, ({ one, many }) => ({
+  user: one(users, {
+    fields: [candidateProfiles.userId],
+    references: [users.id],
+  }),
+  skills: many(candidateSkills),
+  languages: many(candidateLanguages),
+}));
 
-  export const employerRelations = relations(employerProfiles, ({ one, many }) => ({
-    user: one(users, {
-      fields: [employerProfiles.userId],
-      references: [users.id],
-    }),
-    jobs: many(jobs),
-  }));
+export const employerRelations = relations(employerProfiles, ({ one, many }) => ({
+  user: one(users, {
+    fields: [employerProfiles.userId],
+    references: [users.id],
+  }),
+  jobs: many(jobs),
+}));
 
-  export const jobRelations = relations(jobs, ({ one, many }) => ({
-    employer: one(employerProfiles, {
-      fields: [jobs.employerId],
-      references: [employerProfiles.id],
-    }),
-    skills: many(jobSkills),
-  }));
+export const jobRelations = relations(jobs, ({ one, many }) => ({
+  employer: one(employerProfiles, {
+    fields: [jobs.employerId],
+    references: [employerProfiles.id],
+  }),
+  skills: many(jobSkills),
+}));
 
-  export const candidateSkillRelations = relations(candidateSkills, ({ one }) => ({
-    candidate: one(candidateProfiles, {
-      fields: [candidateSkills.candidateId],
-      references: [candidateProfiles.id],
-    }),
-  }));
+export const candidateSkillRelations = relations(candidateSkills, ({ one }) => ({
+  candidate: one(candidateProfiles, {
+    fields: [candidateSkills.candidateId],
+    references: [candidateProfiles.id],
+  }),
+}));
 
-  export const candidateLanguageRelations = relations(candidateLanguages, ({ one }) => ({
-    candidate: one(candidateProfiles, {
-      fields: [candidateLanguages.candidateId],
-      references: [candidateProfiles.id],
-    }),
-  }));
+export const candidateLanguageRelations = relations(candidateLanguages, ({ one }) => ({
+  candidate: one(candidateProfiles, {
+    fields: [candidateLanguages.candidateId],
+    references: [candidateProfiles.id],
+  }),
+}));
 
-  export const jobSkillRelations = relations(jobSkills, ({ one }) => ({
-    job: one(jobs, {
-      fields: [jobSkills.jobId],
-      references: [jobs.id],
-    }),
-  }));
+export const jobSkillRelations = relations(jobSkills, ({ one }) => ({
+  job: one(jobs, {
+    fields: [jobSkills.jobId],
+    references: [jobs.id],
+  }),
+}));
