@@ -145,24 +145,19 @@ export function JobListingPage({ searchQuery = "", user }: { searchQuery?: strin
   // Re-runs whenever the user selects a new county
   useEffect(() => {
     async function loadJobs() {
-      // If there's no user or candidate ID, we can't score jobs yet.
-      if (!user?.candidateId) {
-        setError("Please complete your profile to view your matched opportunities.");
-        return;
-      }
-      
       setLoading(true);
       setError("");
+
       try {
         // Fetch from backend using the dropdown's selected county
-        const data = await api.searchMatchedJobs(user.candidateId, selectedCounty);
+        const data = await api.searchMatchedJobs(user?.candidateId, selectedCounty);
         
         // Map backend schema to UI schema
         const formattedJobs = data.matches.map((m: any) => ({
           ...m.job,
           type: "job", 
           commitment: m.job.employmentType === "full-time" ? "Full-time" : m.job.employmentType === "part-time" ? "Part-time" : "Flexible",
-          tags: m.matchedSkills.length ? m.matchedSkills : m.job.skills?.slice(0, 3) || ["General"],
+          tags: m.matchedSkills.length ? m.matchedSkills : m.job.skills?.slice(0, 3) || ["Entry Level"],
           score: m.score, // Propagating the match score for the UI
         }));
         

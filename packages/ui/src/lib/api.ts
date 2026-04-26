@@ -39,7 +39,7 @@ export const api = {
   },
 
   // --- JOBS ---
-  searchMatchedJobs: async (candidateId: number, county: string) => {
+  searchMatchedJobs: async (candidateId: number | null, county: string) => {
     const res = await fetch(`${API_BASE_URL}/jobs/search-match`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

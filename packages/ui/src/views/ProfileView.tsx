@@ -135,8 +135,18 @@ export function ProfilePage({ user, onProfileUpdated }: any) {
       });
 
       let response;
+      let currentCandidateId = user?.candidateId;
 
-      if (user?.candidateId) {
+      if (!currentCandidateId) {
+        try {
+          const existingData = await api.getUserByEmail(personal.email);
+          currentCandidateId = existingData.profile.id;
+        } catch (err) {
+          console.log("User not found in DB, will proceed with creation.");
+        }
+      }
+
+      if (currentCandidateId) {
         response = await api.updateCandidate(user.candidateId, payload);
       } else {
         response = await api.createCandidate(payload);
@@ -150,13 +160,15 @@ export function ProfilePage({ user, onProfileUpdated }: any) {
         jobs,
         education,
         references,
-        candidateId: response.candidate?.id || user?.candidateId
+        candidateId: response.candidate?.id || currentCandidateId
       };
 
       // Update Context / App State
       if (onProfileUpdated) {
         onProfileUpdated(fullProfile);
       }
+
+      localStorage.setItem("user", JSON.stringify(fullProfile));
 
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);

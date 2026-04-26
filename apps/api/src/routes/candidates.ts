@@ -43,7 +43,7 @@ candidatesRoute.post("/", async (c) => {
   try {
     const body = await c.req.json();
 
-    const skills = extractSkills(body.skills);
+    const skills = extractSkills(body.skills || "");
     const languages = cleanCommaList(body.languages);
 
     const result = await createCandidateWithSkills(c.env.DB, {

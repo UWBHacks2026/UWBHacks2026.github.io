@@ -20,6 +20,7 @@
 
 /** Shape returned by your JobListingPage component */
 export interface JobListing {
+  MatchedObjectId: string;
   id: string;
   type: "job";
   title: string;

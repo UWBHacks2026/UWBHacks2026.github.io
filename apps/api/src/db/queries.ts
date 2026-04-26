@@ -225,7 +225,18 @@ export async function createCandidateWithSkills(
 ) {
   const database = getDb(env);
 
-  const insertedUsers = await database
+  const existingUsers = await database
+    .select()
+    .from(users)
+    .where(eq(users.email, data.email))
+    .limit(1);
+
+  let user;
+
+  if (existingUsers.length > 0) {
+    user = existingUsers[0];
+  } else {
+    const insertedUsers = await database
     .insert(users)
     .values({
       email: data.email,
@@ -234,7 +245,8 @@ export async function createCandidateWithSkills(
     })
     .returning();
 
-  const user = insertedUsers[0];
+    user = insertedUsers[0];
+  }
 
   const insertedCandidates = await database
     .insert(candidateProfiles)
@@ -384,6 +396,19 @@ export async function createJobFromApi(
 ) {
   const database = getDb(env);
 
+  const existingJobs = await database
+    .select()
+    .from(jobs)
+    .where(eq(jobs.externalJobId, data.externalJobId))
+    .limit(1);
+
+  if (existingJobs.length > 0) {
+    return {
+      job: existingJobs[0],
+      skills: data.skills,
+    }
+  }
+
   const insertedJobs = await database
     .insert(jobs)
     .values({
@@ -489,7 +514,7 @@ export async function updateCandidateWithSkills(
 ) {
   const database = getDb(env);
 
-  // 1. Update the main candidate profile
+  // Update the main candidate profile
   const updatedCandidates = await database
     .update(candidateProfiles)
     .set({
@@ -505,18 +530,18 @@ export async function updateCandidateWithSkills(
 
   const candidate = updatedCandidates[0];
 
-  // 2. Clear old skills and languages
+  // Clear old skills and languages
   await database.delete(candidateSkills).where(eq(candidateSkills.candidateId, candidateId));
   await database.delete(candidateLanguages).where(eq(candidateLanguages.candidateId, candidateId));
 
-  // 3. Insert new skills
+  // Insert new skills
   if (data.skills.length > 0) {
     await database.insert(candidateSkills).values(
       data.skills.map((skill) => ({ candidateId, skill }))
     );
   }
 
-  // 4. Insert new languages
+  // Insert new languages
   if (data.languages.length > 0) {
     await database.insert(candidateLanguages).values(
       data.languages.map((language) => ({ candidateId, language }))
