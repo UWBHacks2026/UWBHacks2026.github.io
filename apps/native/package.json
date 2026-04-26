@@ -13,20 +13,21 @@
   },
   "dependencies": {
     "@repo/ui": "workspace:^",
+    "@tailwindcss/vite": "^4.1.18",
     "@tauri-apps/api": "^2.10.1",
     "@tauri-apps/plugin-opener": "^2.5.3",
-    "@tailwindcss/vite": "^4.1.18",
     "lucide-react": "^1.11.0",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react-dom": "^19.2.5",
+    "react-router-dom": "^7.14.2"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:^",
+    "@tailwindcss/postcss": "^4.2.4",
     "@tauri-apps/cli": "^2.10.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
-    "@tailwindcss/postcss": "^4.2.4",
     "tailwindcss": "^4.1.18",
     "typescript": "~6.0.3",
     "vite": "^8.0.10"

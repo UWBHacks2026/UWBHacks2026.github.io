@@ -1,0 +1,20 @@
+@theme {
+  --font-sans: "DM Sans", sans-serif;
+  --font-serif: "DM Serif Display", serif;
+
+  /* Brand Colors */
+  --color-brand-bg: #F5EFE3;
+  --color-brand-dark: #1C1410;
+  --color-brand-card: #FDFAF5;
+  --color-brand-green: #0F6E56;
+  --color-brand-green-hover: #0c5945;
+  --color-brand-gold: #BA7517;
+  --color-brand-purple: #534AB7;
+  --color-brand-orange: #D85A30;
+  --color-brand-border: #E8E3D9;
+  
+  /* Text Colors */
+  --color-text-main: #1C1917;
+  --color-text-muted: #78716C;
+  --color-text-light: #A8A29E;
+}
