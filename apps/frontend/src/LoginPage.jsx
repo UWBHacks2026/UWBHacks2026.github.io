@@ -152,7 +152,7 @@ export default function LoginPage({ onLogin }) {
                 color: "#F5EFE3",
               }}
             >
-              Second Chapter
+              Skill Bridge
             </span>
           </div>
 
