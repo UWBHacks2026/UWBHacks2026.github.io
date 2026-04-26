@@ -5,7 +5,7 @@ import {
   candidateProfiles,
   candidateSkills,
   candidateLanguages,
-  employerProfiles,
+  //employerProfiles,
   jobs,
   jobSkills,
 } from "./schema";
@@ -20,10 +20,10 @@ export function getCandidates(env: D1Database) {
   return database.select().from(candidateProfiles);
 }
 
-export function getEmployers(env: D1Database) {
-  const database = getDb(env);
-  return database.select().from(employerProfiles);
-}
+// export function getEmployers(env: D1Database) {
+//   const database = getDb(env);
+//   return database.select().from(employerProfiles);
+// }
 
 export function getJobs(env: D1Database) {
   const database = getDb(env);
@@ -109,65 +109,66 @@ export function createCandidateProfile(
     .returning();
 }
 
-export function createEmployerProfile(
-  env: D1Database,
-  data: {
-    userId: number;
-    companyName: string;
-    contactName: string;
-    contactEmail: string;
-    phone?: string;
-    county: string;
-    state?: string;
-    industry?: string;
-    website?: string;
-  }
-) {
-  const database = getDb(env);
+// nice to haves
+// export function createEmployerProfile(
+//   env: D1Database,
+//   data: {
+//     userId: number;
+//     companyName: string;
+//     contactName: string;
+//     contactEmail: string;
+//     phone?: string;
+//     county: string;
+//     state?: string;
+//     industry?: string;
+//     website?: string;
+//   }
+// ) {
+//   const database = getDb(env);
 
-  return database
-    .insert(employerProfiles)
-    .values({
-      userId: data.userId,
-      companyName: data.companyName,
-      contactName: data.contactName,
-      contactEmail: data.contactEmail,
-      phone: data.phone,
-      county: data.county,
-      state: data.state ?? "WA",
-      industry: data.industry,
-      website: data.website,
-    })
-    .returning();
-}
+//   return database
+//     .insert(employerProfiles)
+//     .values({
+//       userId: data.userId,
+//       companyName: data.companyName,
+//       contactName: data.contactName,
+//       contactEmail: data.contactEmail,
+//       phone: data.phone,
+//       county: data.county,
+//       state: data.state ?? "WA",
+//       industry: data.industry,
+//       website: data.website,
+//     })
+//     .returning();
+// }
 
-export function createJob(
-  env: D1Database,
-  data: {
-    employerId: number;
-    title: string;
-    description?: string;
-    city?: string;
-    county: string;
-    state?: string;
-    employmentType?: "full-time" | "part-time";
-  }
-) {
-  const database = getDb(env);
+// export function createJob(
+//   env: D1Database,
+//   data: {
+//     employerId?: number;
+//     title: string;
+//     description?: string;
+//     city?: string;
+//     county: string;
+//     state?: string;
+//     employmentType?: "full-time" | "part-time";
+//   }
+// ) {
+//   const database = getDb(env);
 
-  return database
-    .insert(jobs)
-    .values({
-      employerId: data.employerId,
-      title: data.title,
-      description: data.description,
-      city: data.city,
-      county: data.county,
-      state: data.state ?? "WA",
-      employmentType: data.employmentType,
-    })
-    .returning();
-}
+//   return database
+//     .insert(jobs)
+//     .values({
+//       employerId: data.employerId,
+//       title: data.title,
+//       description: data.description,
+//       city: data.city,
+//       county: data.county,
+//       state: data.state ?? "WA",
+//       employmentType: data.employmentType,
+//     })
+//     .returning();
+// }
 
 export function addCandidateSkill(
   env: D1Database,
@@ -278,67 +279,114 @@ export async function createCandidateWithSkills(
   };
 }
 
-export async function createEmployerWithJob(
-  env: D1Database,
+// export async function createEmployerWithJob(
+//   env: D1Database,
+//   data: {
+//     email: string;
+//     passwordHash: string;
+//     companyName: string;
+//     contactName: string;
+//     contactEmail: string;
+//     phone?: string;
+//     county: string;
+//     state?: string;
+//     industry?: string;
+//     website?: string;
+//     jobTitle: string;
+//     jobDescription?: string;
+//     city?: string;
+//     jobCounty: string;
+//     jobState?: string;
+//     employmentType?: "full-time" | "part-time";
+//     skills: string[];
+//   }
+// ) {
+//   const database = getDb(env);
+
+//   const insertedUsers = await database
+//     .insert(users)
+//     .values({
+//       email: data.email,
+//       passwordHash: data.passwordHash,
+//       role: "employer",
+//     })
+//     .returning();
+
+//   const user = insertedUsers[0];
+
+//   const insertedEmployers = await database
+//     .insert(employerProfiles)
+//     .values({
+//       userId: user.id,
+//       companyName: data.companyName,
+//       contactName: data.contactName,
+//       contactEmail: data.contactEmail,
+//       phone: data.phone,
+//       county: data.county,
+//       state: data.state ?? "WA",
+//       industry: data.industry,
+//       website: data.website,
+//     })
+//     .returning();
+
+//   const employer = insertedEmployers[0];
+
+//   const insertedJobs = await database
+//     .insert(jobs)
+//     .values({
+//       employerId: employer.id,
+//       title: data.jobTitle,
+//       description: data.jobDescription,
+//       city: data.city,
+//       county: data.jobCounty,
+//       state: data.jobState ?? "WA",
+//       employmentType: data.employmentType,
+//     })
+//     .returning();
+
+//   const job = insertedJobs[0];
+
+//   if (data.skills.length > 0) {
+//     await database.insert(jobSkills).values(
+//       data.skills.map((skill) => ({
+//         jobId: job.id,
+//         skill,
+//       }))
+//     );
+//   }
+
+//   return {
+//     user,
+//     employer,
+//     job,
+//     skills: data.skills,
+//   };
+// }
+
+export async function createJobFromApi(
+  envDb: D1Database,
   data: {
-    email: string;
-    passwordHash: string;
-    companyName: string;
-    contactName: string;
-    contactEmail: string;
-    phone?: string;
+    employerId?: number;
+    title: string;
+    description?: string;
+    city?: string;
     county: string;
     state?: string;
-    industry?: string;
-    website?: string;
-    jobTitle: string;
-    jobDescription?: string;
-    city?: string;
-    jobCounty: string;
-    jobState?: string;
     employmentType?: "full-time" | "part-time";
     skills: string[];
   }
 ) {
-  const database = getDb(env);
-
-  const insertedUsers = await database
-    .insert(users)
-    .values({
-      email: data.email,
-      passwordHash: data.passwordHash,
-      role: "employer",
-    })
-    .returning();
-
-  const user = insertedUsers[0];
-
-  const insertedEmployers = await database
-    .insert(employerProfiles)
-    .values({
-      userId: user.id,
-      companyName: data.companyName,
-      contactName: data.contactName,
-      contactEmail: data.contactEmail,
-      phone: data.phone,
-      county: data.county,
-      state: data.state ?? "WA",
-      industry: data.industry,
-      website: data.website,
-    })
-    .returning();
-
-  const employer = insertedEmployers[0];
+  const database = getDb(envDb);
 
   const insertedJobs = await database
     .insert(jobs)
     .values({
-      employerId: employer.id,
-      title: data.jobTitle,
-      description: data.jobDescription,
+      employerId: data.employerId,
+      title: data.title,
+      description: data.description,
       city: data.city,
-      county: data.jobCounty,
-      state: data.jobState ?? "WA",
+      county: data.county,
+      state: data.state ?? "WA",
       employmentType: data.employmentType,
     })
     .returning();
@@ -355,8 +403,6 @@ export async function createEmployerWithJob(
   }
 
   return {
-    user,
-    employer,
     job,
     skills: data.skills,
   };

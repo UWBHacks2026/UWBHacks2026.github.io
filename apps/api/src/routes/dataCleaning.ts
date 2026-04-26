@@ -33,7 +33,7 @@ function normInput(userInput: string): string
 
 // The Function to call to extract the skills from the user input,
 // automatically normalizes the input and then applies the regex patterns to extract the skills
-function extractSkills(userInput: string): string[]
+export function extractSkills(userInput: string): string[]
 {
     const normalizedInput = normInput(userInput);
     const extractedSkills: Set<string> = new Set();
