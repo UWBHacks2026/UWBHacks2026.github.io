@@ -14,7 +14,7 @@ usersRoute.post("/", async (c) => {
   const result = await createUser(c.env.DB, {
     email: body.email,
     passwordHash: body.passwordHash,
-    role: body.role,
+    role: body.role === undefined ? "candidate" : body.role,
   });
 
   return c.json({

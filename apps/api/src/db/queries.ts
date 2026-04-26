@@ -472,3 +472,56 @@ export async function createJobFromApi(
 
 //   return matches.sort((a, b) => b.score - a.score);
 // }
+
+export async function updateCandidateWithSkills(
+  env: D1Database,
+  candidateId: number,
+  data: {
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    county: string;
+    state?: string;
+    bio?: string;
+    skills: string[];
+    languages: string[];
+  }
+) {
+  const database = getDb(env);
+
+  // 1. Update the main candidate profile
+  const updatedCandidates = await database
+    .update(candidateProfiles)
+    .set({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      phone: data.phone,
+      county: data.county,
+      state: data.state ?? "WA",
+      bio: data.bio,
+    })
+    .where(eq(candidateProfiles.id, candidateId))
+    .returning();
+
+  const candidate = updatedCandidates[0];
+
+  // 2. Clear old skills and languages
+  await database.delete(candidateSkills).where(eq(candidateSkills.candidateId, candidateId));
+  await database.delete(candidateLanguages).where(eq(candidateLanguages.candidateId, candidateId));
+
+  // 3. Insert new skills
+  if (data.skills.length > 0) {
+    await database.insert(candidateSkills).values(
+      data.skills.map((skill) => ({ candidateId, skill }))
+    );
+  }
+
+  // 4. Insert new languages
+  if (data.languages.length > 0) {
+    await database.insert(candidateLanguages).values(
+      data.languages.map((language) => ({ candidateId, language }))
+    );
+  }
+
+  return { candidate, skills: data.skills, languages: data.languages };
+}

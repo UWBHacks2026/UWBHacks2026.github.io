@@ -8,6 +8,13 @@
       "when": 1777156713591,
       "tag": "0000_rare_captain_marvel",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1777207007471,
+      "tag": "0001_white_annihilus",
+      "breakpoints": true
     }
   ]
 }

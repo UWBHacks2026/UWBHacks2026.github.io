@@ -52,6 +52,35 @@ export const candidateLanguages = sqliteTable("candidate_languages", {
   language: text("language").notNull(),
 });
 
+export const candidateExperience = sqliteTable("candidate_experience", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  candidateId: integer("candidate_id").notNull().references(() => candidateProfiles.id),
+  title: text("title").notNull(),
+  employer: text("employer").notNull(),
+  startDate: text("start_date"),
+  endDate: text("end_date"),
+  isCurrent: integer("is_current", { mode: "boolean" }).default(false),
+  description: text("description"),
+});
+
+export const candidateEducation = sqliteTable("candidate_education", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  candidateId: integer("candidate_id").notNull().references(() => candidateProfiles.id),
+  school: text("school").notNull(),
+  degree: text("degree"),
+  field: text("field"),
+  yearCompleted: text("year_completed"),
+});
+
+export const candidateReferences = sqliteTable("candidate_references", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  candidateId: integer("candidate_id").notNull().references(() => candidateProfiles.id),
+  name: text("name").notNull(),
+  relationship: text("relationship"),
+  phone: text("phone"),
+  email: text("email"),
+});
+
 export const jobs = sqliteTable("jobs", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   employerId: integer("employer_id").references(() => employerProfiles.id),
@@ -85,12 +114,12 @@ export const usersRelations = relations(users, ({ one }) => ({
 }));
 
 export const candidateRelations = relations(candidateProfiles, ({ one, many }) => ({
-  user: one(users, {
-    fields: [candidateProfiles.userId],
-    references: [users.id],
-  }),
+  user: one(users, { fields: [candidateProfiles.userId], references: [users.id] }),
   skills: many(candidateSkills),
   languages: many(candidateLanguages),
+  experience: many(candidateExperience),
+  education: many(candidateEducation),
+  references: many(candidateReferences),
 }));
 
 export const employerRelations = relations(employerProfiles, ({ one, many }) => ({

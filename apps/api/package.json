@@ -5,7 +5,8 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
     "generate": "drizzle-kit generate",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "migrate-local": "wrangler d1 migrations apply skill-bridge-db --local"
   },
   "dependencies": {
     "@types/node": "^25.6.0",

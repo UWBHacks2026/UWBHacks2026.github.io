@@ -34,7 +34,7 @@ export const FEATURED = [
     title: "Warehouse Associate",
     org: "Sunrise Logistics Co.",
     location: "Chicago, IL",
-    pay: "$18–21/hr",
+    pay: "$18-21/hr",
     type: "job",
     color: "#0F6E56",
     initials: "SL",

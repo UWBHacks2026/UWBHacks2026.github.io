@@ -54,7 +54,11 @@ export function LoginPage({ onLogin }: { onLogin: (user: any) => void }) {
       onLogin({
         name: mode === "signup" ? form.name : form.email.split("@")[0],
         email: form.email,
+        password: form.password,
+        mode,
       });
+
+      setLoading(false);
     }, 800);
   };
 
@@ -68,15 +72,15 @@ export function LoginPage({ onLogin }: { onLogin: (user: any) => void }) {
 
         <div className="flex items-center gap-2.5 z-10">
           <div className="w-9 h-9 bg-brand-green rounded-xl" />
-          <span className="font-serif text-[22px] text-brand-bg">Second Chapter</span>
+          <span className="font-serif text-[22px] text-brand-bg">Skill Bridge</span>
         </div>
 
         <div className="z-10 max-w-lg">
           <p className="text-[11px] font-bold text-brand-gold tracking-widest uppercase mb-5">
-            Your fresh start begins here
+            Your next opportunity begins here
           </p>
           <h1 className="font-serif text-4xl lg:text-5xl text-brand-bg leading-tight">
-            Every person deserves a <em className="text-brand-green not-italic">second chance</em> to thrive.
+            Every person deserves a <em className="text-brand-green not-italic"> chance</em> to thrive.
           </h1>
         </div>
       </div>
@@ -87,7 +91,7 @@ export function LoginPage({ onLogin }: { onLogin: (user: any) => void }) {
         {/* Mobile Logo (Only visible on small screens) */}
         <div className="md:hidden flex items-center gap-2.5 mb-10">
           <div className="w-8 h-8 bg-brand-green rounded-lg" />
-          <span className="font-serif text-xl text-text-main">Second Chapter</span>
+          <span className="font-serif text-xl text-text-main">Skill Bridge</span>
         </div>
 
         {/* Toggle */}

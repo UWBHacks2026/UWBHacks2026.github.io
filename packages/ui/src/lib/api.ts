@@ -12,6 +12,11 @@ export const api = {
     if (!res.ok) throw new Error("Failed to create user");
     return res.json();
   },
+  getUserByEmail: async (email: string) => {
+    const res = await fetch(`${API_BASE_URL}/candidates/by-email/${encodeURIComponent(email)}`);
+    if (!res.ok) throw new Error("User not found");
+    return res.json();
+  },
 
   // --- CANDIDATES ---
   createCandidate: async (data: any) => {
@@ -21,6 +26,15 @@ export const api = {
       body: JSON.stringify(data),
     });
     if (!res.ok) throw new Error("Failed to save profile");
+    return res.json();
+  },
+  updateCandidate: async (id: number, data: any) => {
+    const res = await fetch(`${API_BASE_URL}/candidates/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data })
+    });
+    if (!res.ok) throw new Error("Failed to update profile");
     return res.json();
   },
 

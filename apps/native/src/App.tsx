@@ -1,11 +1,11 @@
 import { BrowserRouter, useNavigate, useLocation, Link as RouterLink, Routes, Route, Navigate, Link } from "react-router-dom";
-import { RoutingProvider } from "@repo/ui/components/RoutingContext";
 import { Navbar } from "@repo/ui/components/navbar";
 import { useState } from "react";
 import { LoginPage } from "@repo/ui/views/LoginView";
 import { DashboardPage } from "@repo/ui/views/DashboardView";
 import { JobListingPage } from "@repo/ui/views/JobListingView";
 import { ProfilePage } from "@repo/ui/views/ProfileView";
+import { AuthProvider } from "@repo/ui/components/AuthContext";
 
 function AppContent() {
     const navigate = useNavigate();
@@ -60,7 +60,9 @@ function AppContent() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </BrowserRouter>
   )
 }

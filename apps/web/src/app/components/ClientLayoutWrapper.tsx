@@ -3,10 +3,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Navbar } from "@repo/ui/components/navbar";
+import { AuthProvider, useAuth } from "@repo/ui/components/AuthContext";
 
-export function ClientLayoutWrapper({ children }: { children: React.ReactNode }) {
+function InnerClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [user, setUser] = useState(null); // Replace with your Next.js auth logic
+  const {user, logout} = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
 
   // Don't show Navbar on login page
@@ -18,7 +19,7 @@ export function ClientLayoutWrapper({ children }: { children: React.ReactNode })
     <div className="flex flex-col min-h-screen">
       <Navbar 
         user={user} 
-        onLogout={() => setUser(null)} 
+        onLogout={logout} 
         searchQuery={searchQuery} 
         onSearch={setSearchQuery} 
         LinkComponent={Link} // Inject Next.js Link
@@ -28,4 +29,12 @@ export function ClientLayoutWrapper({ children }: { children: React.ReactNode })
       </main>
     </div>
   );
+}
+
+export function ClientLayoutWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <AuthProvider>
+      <InnerClient>{children}</InnerClient>
+    </AuthProvider>
+  )
 }
