@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skill Bridge README</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background-color: #f7f7f7;
+      color: #222;
+    }
+
+    header {
+      background-color: #0f6e56;
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1, h2, h3 {
+      color: #0f6e56;
+    }
+
+    header h1 {
+      color: white;
+    }
+
+    code, pre {
+      background-color: #eeeeee;
+      padding: 0.3rem;
+      border-radius: 5px;
+    }
+
+    pre {
+      padding: 1rem;
+      overflow-x: auto;
+    }
+
+    ul {
+      margin-left: 1.5rem;
+    }
+
+    .section {
+      margin-bottom: 2rem;
+    }
+
+    .placeholder {
+      color: #999;
+      font-style: italic;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Skill Bridge</h1>
+    <p>A skill-based job matching web application</p>
+  </header>
+
+  <main>
+    <section class="section">
+      <h2>Project Overview</h2>
+      <p>
+        <strong>Skill Bridge</strong> is a web application designed to help candidates connect their skills
+        with real job opportunities. Candidates enter their profile information, skills, languages, location,
+        and job preferences. The system then uses this information to search job listings from USAJobs,
+        extract relevant job skills, compare them with the candidate’s skills, and return matched job results.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Project Purpose</h2>
+      <p>
+        The purpose of Skill Bridge is to reduce the gap between job seekers and job opportunities by focusing
+        on skills instead of only job titles. Many candidates may have useful skills but may not know what jobs
+        match their abilities. Skill Bridge helps candidates discover jobs that align with their existing skills.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Core Features</h2>
+      <ul>
+        <li>Create and store candidate user accounts.</li>
+        <li>Create candidate profiles with personal and location information.</li>
+        <li>Accept candidate skills as user input.</li>
+        <li>Clean and extract skills from user-provided text.</li>
+        <li>Store candidate skills and languages in separate database tables.</li>
+        <li>Search USAJobs using candidate skills and county location.</li>
+        <li>Parse USAJobs API results into clean job objects.</li>
+        <li>Save job listings from USAJobs into the database.</li>
+        <li>Extract job-related skills from job descriptions.</li>
+        <li>Compare candidate skills with job skills.</li>
+        <li>Return matched jobs with a match score.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Technology Stack</h2>
+      <ul>
+        <li><strong>Frontend:</strong> -------</li>
+        <li><strong>Backend/API:</strong> Hono</li>
+        <li><strong>Database:</strong> Cloudflare D1 / SQLite</li>
+        <li><strong>ORM:</strong> Drizzle ORM</li>
+        <li><strong>External API:</strong> USAJobs API</li>
+        <li><strong>Language:</strong> TypeScript</li>
+        <li><strong>Deployment:</strong> Cloudflare Workers</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>System Architecture</h2>
+      <p>The application follows a simple full-stack structure:</p>
+
+      <pre>
+Frontend
+   ↓
+API Routes
+   ↓
+Data Cleaning / USAJobs Search
+   ↓
+Database Queries
+   ↓
+Cloudflare D1 Database
+   ↓
+Matched Job Results
+   ↓
+Frontend Display
+      </pre>
+
+      <p>
+        The frontend does not directly communicate with the database. Instead, the frontend sends requests
+        to API routes. The API routes process the request, call helper functions, interact with the database,
+        and return a response back to the frontend.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Database Design</h2>
+      <p>The database contains tables for users, candidate profiles, candidate skills, candidate languages, jobs, and job skills.</p>
+
+      <h3>Main Tables</h3>
+      <ul>
+        <li><strong>users:</strong> Stores account-level information such as email, password hash, role, and created date.</li>
+        <li><strong>candidate_profiles:</strong> Stores candidate-specific details such as name, phone, county, state, bio, availability, and preferred job type.</li>
+        <li><strong>candidate_skills:</strong> Stores each candidate skill as a separate row linked to a candidate profile.</li>
+        <li><strong>candidate_languages:</strong> Stores each candidate language as a separate row linked to a candidate profile.</li>
+        <li><strong>jobs:</strong> Stores job listings pulled from USAJobs, including title, organization, description, location, apply URL, pay, category, and posting date.</li>
+        <li><strong>job_skills:</strong> Stores extracted job skills as separate rows linked to a job.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Why Skills and Languages Are Separate Tables</h2>
+      <p>
+        Skills and languages are stored in separate tables because one candidate can have many skills and many
+        languages. Instead of storing all skills in one text column, each skill is stored as its own row. This
+        makes it easier to search, compare, and match candidate skills with job requirements.
+      </p>
+
+      <pre>
+candidate_profiles
+        ↓
+candidate_skills
+
+candidate_profiles
+        ↓
+candidate_languages
+      </pre>
+    </section>
+
+    <section class="section">
+      <h2>API Routes</h2>
+      <p>The project uses API routes to connect the frontend with the backend and database.</p>
+
+      <h3>Users Routes</h3>
+      <ul>
+        <li><code>GET /users</code> - Gets all users.</li>
+        <li><code>POST /users</code> - Creates a new user.</li>
+      </ul>
+
+      <h3>Candidates Routes</h3>
+      <ul>
+        <li><code>GET /candidates</code> - Gets all candidate profiles.</li>
+        <li><code>POST /candidates</code> - Creates a candidate profile with skills and languages.</li>
+        <li><code>GET /candidates/:id/skills</code> - Gets skills for a specific candidate.</li>
+        <li><code>GET /candidates/:id/languages</code> - Gets languages for a specific candidate.</li>
+      </ul>
+
+      <h3>Jobs Routes</h3>
+      <ul>
+        <li><code>GET /jobs</code> - Gets saved jobs from the database.</li>
+        <li><code>GET /jobs/:id/skills</code> - Gets extracted skills for a specific job.</li>
+        <li><code>POST /jobs/search-match</code> - Searches USAJobs, saves jobs, compares skills, and returns matched jobs.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>USAJobs API Integration</h2>
+      <p>
+        The project uses the USAJobs API to search for real federal job listings. The API returns complex job
+        data, so the backend parses the information into a cleaner job object that is easier to use in the
+        frontend and database.
+      </p>
+
+      <h3>Parsed Job Object</h3>
+      <pre>
+{
+  id: "USAJobs job ID",
+  type: "job",
+  title: "Job title",
+  org: "Organization name",
+  location: "Job location",
+  commitment: "Full-time / Part-time / Flexible",
+  pay: "Salary or hourly pay",
+  tags: ["Job tags"],
+  category: "Job category",
+  posted: "Posted date",
+  color: "UI color",
+  initials: "Organization initials",
+  description: "Job description",
+  applyUrl: "Application link"
+}
+      </pre>
+    </section>
+
+    <section class="section">
+      <h2>Skill Extraction and Data Cleaning</h2>
+      <p>
+        Candidate skills and job skills may be entered as long text or comma-separated values. The backend uses
+        a skill extraction function to normalize and identify skills from user input or job descriptions.
+      </p>
+
+      <p>Example:</p>
+
+      <pre>
+Input:
+"I have experience with JavaScript, Python, customer service, and problem solving."
+
+Output:
+["Programming", "Customer Service", "Critical Thinking"]
+      </pre>
+
+      <p>
+        This helps the system store skills consistently and improves the accuracy of job matching.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Job Matching Logic</h2>
+      <p>
+        The matching system compares candidate skills with extracted job skills. Each job receives a match score
+        based on how many required job skills overlap with the candidate’s skills.
+      </p>
+
+      <pre>
+Candidate Skills:
+["Programming", "Customer Service", "Writing"]
+
+Job Skills:
+["Programming", "Writing", "Management"]
+
+Matched Skills:
+["Programming", "Writing"]
+
+Match Score:
+2 / 3 = 67%
+      </pre>
+    </section>
+
+    <section class="section">
+      <h2>Current User Flow</h2>
+      <ol>
+        <li>Candidate enters profile information on the frontend.</li>
+        <li>Frontend sends candidate data to the API.</li>
+        <li>API cleans and extracts candidate skills.</li>
+        <li>Candidate profile, skills, and languages are saved in the database.</li>
+        <li>Candidate requests job matches.</li>
+        <li>Backend searches USAJobs using candidate skills and county.</li>
+        <li>USAJobs results are parsed into clean job objects.</li>
+        <li>Jobs and job skills are saved into the database.</li>
+        <li>System compares candidate skills with job skills.</li>
+        <li>Frontend displays matched jobs with match scores.</li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>Project File Structure</h2>
+      <pre>
+src/
+  app.ts
+  index.ts
+  bindings.d.ts
+
+  db/
+    schema.ts
+    queries.ts
+    index.ts
+
+  routes/
+    users.ts
+    candidates.ts
+    jobs.ts
+    searchFile.ts
+    dataCleaning.ts
+      </pre>
+    </section>
+
+    <section class="section">
+      <h2>Important Files</h2>
+
+      <h3>schema.ts</h3>
+      <p>
+        Defines the database tables and relationships using Drizzle ORM.
+      </p>
+
+      <h3>queries.ts</h3>
+      <p>
+        Contains reusable database functions such as creating users, creating candidates, saving jobs from
+        USAJobs, getting skills, and matching candidates to jobs.
+      </p>
+
+      <h3>dataCleaning.ts</h3>
+      <p>
+        Contains helper functions for extracting and normalizing skills from raw text input.
+      </p>
+
+      <h3>searchFile.ts</h3>
+      <p>
+        Contains the USAJobs search logic. It searches jobs by skills and county, parses raw API data, and
+        returns clean job listings.
+      </p>
+
+      <h3>routes/users.ts</h3>
+      <p>
+        Handles user account routes.
+      </p>
+
+      <h3>routes/candidates.ts</h3>
+      <p>
+        Handles candidate profile creation, candidate skills, and candidate languages.
+      </p>
+
+      <h3>routes/jobs.ts</h3>
+      <p>
+        Handles USAJobs searching, saving jobs to the database, and returning matched job results.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Environment Variables</h2>
+      <p>The project requires the following environment variables:</p>
+
+      <ul>
+        <li><code>USAJOBS_API_KEY</code> - -------</li>
+        <li><code>USAJOBS_EMAIL</code> - -------</li>
+        <li><code>DB</code> - Cloudflare D1 database binding</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>How to Run the Project</h2>
+      <p class="placeholder">-------</p>
+
+      <pre>
+-------
+      </pre>
+    </section>
+
+    <section class="section">
+      <h2>Future Improvements</h2>
+      <ul>
+        <li>Add authentication and secure password hashing.</li>
+        <li>Prevent duplicate USAJobs listings from being saved multiple times.</li>
+        <li>Improve skill extraction with a larger skill dictionary or AI-based parsing.</li>
+        <li>Add filters for salary, remote jobs, job type, and location.</li>
+        <li>Add better frontend job cards and saved job tracking.</li>
+        <li>Add candidate dashboards.</li>
+        <li>Add employer profile support as a future nice-to-have feature.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Team Members</h2>
+      <ul>
+        <li>-------</li>
+        <li>-------</li>
+        <li>-------</li>
+        <li>-------</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Summary</h2>
+      <p>
+        Skill Bridge is a candidate-focused job matching platform that connects user skills with real job
+        opportunities from USAJobs. The application collects candidate information, cleans and extracts skills,
+        searches for real job listings, saves job data, compares skills, and returns matched jobs with scores.
+        The project uses a structured full-stack architecture with a frontend, Hono API routes, Drizzle ORM,
+        Cloudflare D1 database, and USAJobs API integration.
+      </p>
+    </section>
+  </main>
+</body>
+</html>
