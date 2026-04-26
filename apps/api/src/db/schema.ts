@@ -54,12 +54,19 @@ export const candidateProfiles = sqliteTable("candidate_profiles", {
 
   export const jobs = sqliteTable("jobs", {
   id: integer("id").primaryKey({ autoIncrement: true }),
+
   employerId: integer("employer_id").references(() => employerProfiles.id),
+
+  externalJobId: text("external_job_id"),
+  source: text("source").default("USAJobs"),
+
   title: text("title").notNull(),
   description: text("description"),
   city: text("city"),
-  county: text("county").notNull(),
+  county: text("county").default("king"),
   state: text("state").notNull().default("WA"),
+  location: text("location"),
+  applyUrl: text("apply_url"),
 
   employmentType: text("employment_type", {
     enum: ["full-time", "part-time"],
