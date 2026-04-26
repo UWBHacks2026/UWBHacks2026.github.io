@@ -134,12 +134,12 @@ export function ProfilePage({ user, onProfileUpdated }: any) {
         languages: "English", 
       });
 
-      let response;
+      let response: any;
       let currentCandidateId = user?.candidateId;
 
       if (!currentCandidateId) {
         try {
-          const existingData = await api.getUserByEmail(personal.email);
+          const existingData: any = await api.getUserByEmail(personal.email);
           currentCandidateId = existingData.profile.id;
         } catch (err) {
           console.log("User not found in DB, will proceed with creation.");

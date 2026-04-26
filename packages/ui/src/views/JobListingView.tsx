@@ -150,7 +150,7 @@ export function JobListingPage({ searchQuery = "", user }: { searchQuery?: strin
 
       try {
         // Fetch from backend using the dropdown's selected county
-        const data = await api.searchMatchedJobs(user?.candidateId, selectedCounty);
+        const data: any = await api.searchMatchedJobs(user?.candidateId, selectedCounty);
         
         // Map backend schema to UI schema
         const formattedJobs = data.matches.map((m: any) => ({

@@ -3,9 +3,12 @@
   "name": "skill-bridge-api",
   "main": "src/index.ts",
   "compatibility_date": "2026-04-25",
-  // "vars": {
-  //   "MY_VAR": "my-variable"
-  // },
+  "routes": [
+		{
+			"pattern": "api.skill-bridgewa.org",
+			"custom_domain": true,
+		}
+	],
   "d1_databases": [
     {
       "binding": "DB",
@@ -14,10 +17,10 @@
       "migrations_dir": "./drizzle"
     }
   ],
-  // ],
-  // "ai": {
-  //   "binding": "AI"
-  // },
+  "vars": {
+    "USAJOBS_API_KEY": "xxx",
+    "USAJOBS_EMAIL": "email@mail.com"
+  },
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1
