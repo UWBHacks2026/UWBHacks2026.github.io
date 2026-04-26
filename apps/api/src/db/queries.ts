@@ -364,29 +364,42 @@ export async function createCandidateWithSkills(
 // }
 
 export async function createJobFromApi(
-  envDb: D1Database,
+  env: D1Database,
   data: {
-    employerId?: number;
+    externalJobId: string;
+    org?: string;
     title: string;
     description?: string;
     city?: string;
-    county: string;
+    county?: string;
     state?: string;
+    location?: string;
+    pay?: string;
+    category?: string;
+    posted?: string;
+    applyUrl?: string;
     employmentType?: "full-time" | "part-time";
     skills: string[];
   }
 ) {
-  const database = getDb(envDb);
+  const database = getDb(env);
 
   const insertedJobs = await database
     .insert(jobs)
     .values({
-      employerId: data.employerId,
+      externalJobId: data.externalJobId,
+      source: "USAJobs",
       title: data.title,
+      org: data.org,
       description: data.description,
       city: data.city,
       county: data.county,
       state: data.state ?? "WA",
+      location: data.location,
+      applyUrl: data.applyUrl,
+      pay: data.pay,
+      category: data.category,
+      posted: data.posted,
       employmentType: data.employmentType,
     })
     .returning();
@@ -408,54 +421,54 @@ export async function createJobFromApi(
   };
 }
 
-export async function matchCandidatesToJobs(env: D1Database) {
-  const database = getDb(env);
+// export async function matchCandidatesToJobs(env: D1Database) {
+//   const database = getDb(env);
 
-  const candidates = await database.select().from(candidateProfiles);
-  const allJobs = await database.select().from(jobs);
+//   const candidates = await database.select().from(candidateProfiles);
+//   const allJobs = await database.select().from(jobs);
 
-  const matches = [];
+//   const matches = [];
 
-  for (const job of allJobs) {
-    const requiredSkills = await database
-      .select()
-      .from(jobSkills)
-      .where(eq(jobSkills.jobId, job.id));
+//   for (const job of allJobs) {
+//     const requiredSkills = await database
+//       .select()
+//       .from(jobSkills)
+//       .where(eq(jobSkills.jobId, job.id));
 
-    const jobSkillList = requiredSkills.map((row: { skill: string }) =>
-      row.skill.toLowerCase().trim()
-    );
+//     const jobSkillList = requiredSkills.map((row: { skill: string }) =>
+//       row.skill.toLowerCase().trim()
+//     );
 
-    for (const candidate of candidates) {
-      const candidateSkillRows = await database
-        .select()
-        .from(candidateSkills)
-        .where(eq(candidateSkills.candidateId, candidate.id));
+//     for (const candidate of candidates) {
+//       const candidateSkillRows = await database
+//         .select()
+//         .from(candidateSkills)
+//         .where(eq(candidateSkills.candidateId, candidate.id));
 
-      const candidateSkillList = candidateSkillRows.map(
-        (row: { skill: string }) => row.skill.toLowerCase().trim()
-      );
+//       const candidateSkillList = candidateSkillRows.map(
+//         (row: { skill: string }) => row.skill.toLowerCase().trim()
+//       );
 
-      const matchedSkills = jobSkillList.filter((skill: string) =>
-        candidateSkillList.includes(skill)
-      );
+//       const matchedSkills = jobSkillList.filter((skill: string) =>
+//         candidateSkillList.includes(skill)
+//       );
 
-      const score =
-        jobSkillList.length === 0
-          ? 0
-          : Math.round((matchedSkills.length / jobSkillList.length) * 100);
+//       const score =
+//         jobSkillList.length === 0
+//           ? 0
+//           : Math.round((matchedSkills.length / jobSkillList.length) * 100);
 
-      matches.push({
-        jobId: job.id,
-        jobTitle: job.title,
-        candidateId: candidate.id,
-        candidateName: `${candidate.firstName} ${candidate.lastName}`,
-        matchedSkills,
-        totalJobSkills: jobSkillList.length,
-        score,
-      });
-    }
-  }
+//       matches.push({
+//         jobId: job.id,
+//         jobTitle: job.title,
+//         candidateId: candidate.id,
+//         candidateName: `${candidate.firstName} ${candidate.lastName}`,
+//         matchedSkills,
+//         totalJobSkills: jobSkillList.length,
+//         score,
+//       });
+//     }
+//   }
 
-  return matches.sort((a, b) => b.score - a.score);
-}
+//   return matches.sort((a, b) => b.score - a.score);
+// }

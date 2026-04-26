@@ -17,15 +17,15 @@ const skillPatterns: Record<string, RegExp> =
 function normInput(userInput: string): string
 {
     // we normalize the input by converting it to lowercase and removing extra spaces
-    userInput.toLowerCase();
+    userInput = userInput.toLowerCase();
     // now cut out all of the fillers words that don't really mean anything
-    userInput.replace(/\b(?:i(?:'?m| am)? (?:good|great|experienced|skilled|proficient|expert) at|knowledge of|experience (?:in|with)|familiar with|working knowledge of)\b/g, "");
+    userInput = userInput.replace(/\b(?:i(?:'?m| am)? (?:good|great|experienced|skilled|proficient|expert) at|knowledge of|experience (?:in|with)|familiar with|working knowledge of)\b/g, "");
 
     //cut the punctuations
-    userInput.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, " ");
+    userInput = userInput.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, " ");
 
     //now the leadign spaces
-    userInput.replace(/\s+/g, " ").trim();
+    userInput = userInput.replace(/\s+/g, " ").trim();
 
     // send back the normalized input
     return userInput;
